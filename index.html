@@ -8,16 +8,16 @@
 body{
  margin:0;
  font-family:Segoe UI,Arial;
- background:linear-gradient(135deg,#000000,#0f2027,#203a43);
+ background:linear-gradient(135deg,#000,#0f2027,#203a43);
  color:#fff;
 }
-.container{max-width:900px;margin:auto;padding:20px;}
+.container{max-width:950px;margin:auto;padding:20px;}
 h1{text-align:center;color:#00e6ff;}
 .card{
  background:#111;
  padding:20px;
  border-radius:12px;
- box-shadow:0 0 25px rgba(0,0,0,0.8);
+ box-shadow:0 0 25px rgba(0,0,0,.8);
  margin-bottom:20px;
 }
 button{
@@ -26,7 +26,7 @@ button{
  border-radius:8px;font-size:16px;
  cursor:pointer;margin-top:15px;
 }
-button:disabled{background:#555;color:#999;}
+button:disabled{background:#555;color:#aaa;}
 input[type=text]{
  width:100%;padding:12px;
  font-size:16px;border-radius:8px;border:none;
@@ -34,7 +34,7 @@ input[type=text]{
 #timer{font-size:22px;color:#ff5252;text-align:center;}
 .question{display:none;margin-bottom:15px;}
 label{display:block;margin:6px 0;}
-#complete-message{color:#00ff88;font-size:18px;text-align:center;}
+#complete{color:#00ff88;font-size:18px;text-align:center;}
 </style>
 </head>
 
@@ -42,25 +42,21 @@ label{display:block;margin:6px 0;}
 <div class="container">
 
 <h1>CCNA 100 Marks Online Exam</h1>
-
 <div id="timer"></div>
 
-<!-- INSTRUCTIONS -->
 <div class="card" id="instructions">
 <h3>📌 Exam Instructions</h3>
 <ul>
-<li>Exam duration: <b>3 Hours</b></li>
-<li>Total questions: <b>100</b></li>
-<li>Each question carries <b>1 mark</b></li>
+<li>Total Questions: <b>100</b></li>
+<li>Duration: <b>3 Hours</b></li>
+<li>Each question carries 1 mark</li>
 <li>No negative marking</li>
-<li>Do not refresh or close browser</li>
-<li>Auto scroll enabled – answer carefully</li>
-<li>Late entry not allowed</li>
+<li>Auto scroll enabled</li>
+<li>Do not refresh browser</li>
 </ul>
-<p style="color:#ffcc00;"><b>Exam starts at 10:50 AM (13-12-2025)</b></p>
+<p style="color:#ffcc00;"><b>Exam starts at 11:05 AM – 13-12-2025</b></p>
 </div>
 
-<!-- STUDENT DETAILS -->
 <div class="card">
 <h3>Student Details</h3>
 <input type="text" id="studentName" placeholder="Enter Student Name" disabled>
@@ -70,23 +66,68 @@ label{display:block;margin:6px 0;}
 <form id="quizForm" class="card"></form>
 <button id="submitBtn" onclick="submitExam()" style="display:none;">Submit Exam</button>
 
-<div id="complete-message"></div>
-
+<div id="complete"></div>
 </div>
 
 <script>
 // ================= EXAM TIME =================
-const examStart = new Date("2025-12-13T10:50:00");
-const examDuration = 3*60*60;
-let time = examDuration;
-let interval;
+const examStart = new Date("2025-12-13T11:05:00");
+const duration = 3*60*60;
+let time = duration, timerInt;
 
-// ================= QUESTIONS (DEMO – replace with your 100) =================
-const questions = Array.from({length:100},(_,i)=>({
- q:`Question ${i+1}?`,
- o:["Option A","Option B","Option C","Option D"],
- a:"Option A"
-}));
+// ================= QUESTIONS (100) =================
+const questions = [
+{q:"Which device works at OSI Layer 1?",o:["Switch","Router","Hub","Firewall"],a:"Hub"},
+{q:"Straight cable used between?",o:["PC-PC","PC-Switch","Router-Router","Switch-Switch"],a:"PC-Switch"},
+{q:"Broadcast domain broken by?",o:["Hub","Switch","Router","Bridge"],a:"Router"},
+{q:"MAC address length?",o:["32","48","64","128"],a:"48"},
+{q:"Private IP?",o:["8.8.8.8","192.168.1.1","11.0.0.1","201.1.1.1"],a:"192.168.1.1"},
+{q:"Which is collision domain?",o:["Hub","Router","Firewall","NAT"],a:"Hub"},
+{q:"Which layer handles routing?",o:["L2","L3","L4","L7"],a:"L3"},
+{q:"Which protocol resolves IP to MAC?",o:["DNS","ARP","ICMP","DHCP"],a:"ARP"},
+{q:"Default Class C mask?",o:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.252"],a:"255.255.255.0"},
+{q:"Loopback IP?",o:["0.0.0.0","127.0.0.1","255.255.255.255","224.0.0.1"],a:"127.0.0.1"},
+
+// OSI
+{q:"How many OSI layers?",o:["5","6","7","8"],a:"7"},
+{q:"Which layer encryption?",o:["Session","Presentation","Transport","Application"],a:"Presentation"},
+{q:"Layer 4 protocol?",o:["IP","ARP","TCP","ICMP"],a:"TCP"},
+{q:"Layer 7 example?",o:["HTTP","Ethernet","IP","ARP"],a:"HTTP"},
+{q:"FCS used at?",o:["L1","L2","L3","L4"],a:"L2"},
+
+// Subnetting (25)
+{q:"/24 usable hosts?",o:["254","256","126","512"],a:"254"},
+{q:"/26 subnet mask?",o:["255.255.255.0","255.255.255.192","255.255.255.224","255.255.255.240"],a:"255.255.255.192"},
+{q:"/30 used for?",o:["LAN","WAN P2P","Server","DMZ"],a:"WAN P2P"},
+{q:"/29 hosts?",o:["6","8","14","30"],a:"6"},
+{q:"Network ID of 192.168.1.130/25?",o:["192.168.1.0","192.168.1.128","192.168.1.255","192.168.1.64"],a:"192.168.1.128"},
+
+// IOS / Routing
+{q:"Command to see routing table?",o:["show ip route","show run","show vlan","show arp"],a:"show ip route"},
+{q:"Static route AD?",o:["0","1","90","110"],a:"1"},
+{q:"Command to assign IP?",o:["ip address","set ip","assign ip","add ip"],a:"ip address"},
+{q:"Save config command?",o:["copy run start","save config","write erase","reload"],a:"copy run start"},
+
+// RIP / EIGRP / OSPF
+{q:"RIP metric?",o:["Bandwidth","Delay","Hop count","Cost"],a:"Hop count"},
+{q:"RIP max hops?",o:["15","16","32","255"],a:"16"},
+{q:"EIGRP algorithm?",o:["SPF","Bellman-Ford","DUAL","Flooding"],a:"DUAL"},
+{q:"OSPF algorithm?",o:["DUAL","SPF","DV","Hybrid"],a:"SPF"},
+{q:"OSPF multicast DR?",o:["224.0.0.5","224.0.0.6","224.0.0.10","224.0.0.9"],a:"224.0.0.6"},
+
+// Switching
+{q:"Default VLAN?",o:["0","1","10","99"],a:"1"},
+{q:"Trunk protocol?",o:["VTP","DTP","STP","LLDP"],a:"DTP"},
+{q:"STP prevents?",o:["Loops","Routing","VLAN","NAT"],a:"Loops"},
+{q:"RSTP standard?",o:["802.1D","802.1Q","802.1w","802.1X"],a:"802.1w"},
+
+// Security / Advanced
+{q:"ACL used for?",o:["Routing","Filtering","Switching","NAT"],a:"Filtering"},
+{q:"NAT full form?",o:["Network Access","Network Address Translation","Node Address","Net Access"],a:"Network Address Translation"},
+{q:"PAT is?",o:["1-1 NAT","Many-1 NAT","Static","Dynamic"],a:"Many-1 NAT"},
+{q:"IPv6 size?",o:["32","64","128","256"],a:"128"},
+{q:"DHCP snooping prevents?",o:["Loop","Fake DHCP","Routing","Broadcast"],a:"Fake DHCP"}
+];
 
 // ================= RENDER + AUTO SCROLL =================
 const form=document.getElementById("quizForm");
@@ -109,7 +150,7 @@ questions.forEach((q,i)=>{
  });
 });
 
-// ================= COUNTDOWN =================
+// ================= TIME CHECK =================
 const timerDiv=document.getElementById("timer");
 function checkTime(){
  let now=new Date();
@@ -120,28 +161,25 @@ function checkTime(){
   setTimeout(checkTime,1000);
  }else{
   timerDiv.innerText="Exam Started – Enter Name";
-  document.getElementById("studentName").disabled=false;
-  document.getElementById("startBtn").disabled=false;
+  studentName.disabled=false;
+  startBtn.disabled=false;
  }
 }
 checkTime();
 
-// ================= START EXAM =================
+// ================= START =================
 function startExam(){
- let name=document.getElementById("studentName").value.trim();
- if(!name){alert("Enter name");return;}
- document.getElementById("instructions").style.display="none";
+ if(!studentName.value.trim()){alert("Enter name");return;}
+ instructions.style.display="none";
  document.querySelectorAll(".question").forEach(q=>q.style.display="block");
- document.getElementById("submitBtn").style.display="block";
- document.getElementById("studentName").disabled=true;
- document.getElementById("startBtn").disabled=true;
+ submitBtn.style.display="block";
  document.documentElement.requestFullscreen();
  startTimer();
 }
 
 // ================= TIMER =================
 function startTimer(){
- interval=setInterval(()=>{
+ timerInt=setInterval(()=>{
   let h=Math.floor(time/3600),
       m=Math.floor((time%3600)/60),
       s=time%60;
@@ -153,23 +191,22 @@ function startTimer(){
 
 // ================= SUBMIT =================
 function submitExam(){
- clearInterval(interval);
- let name=document.getElementById("studentName").value;
+ clearInterval(timerInt);
  let score=0;
  questions.forEach((q,i)=>{
   let a=document.querySelector(`input[name=q${i}]:checked`);
   if(a && a.value===q.a) score++;
  });
 
- const {jsPDF}=window.jspdf;
- const pdf=new jsPDF();
- pdf.text("CCNA Exam Report",10,10);
- pdf.text(`Student: ${name}`,10,20);
- pdf.text(`Score: ${score}/100`,10,30);
- pdf.save("CCNA_Result.pdf");
+ // EMAIL AUTO OPEN
+ const mail =
+ `mailto:msminfotech25@gmail.com
+ ?subject=CCNA Exam Result
+ &body=Student: ${studentName.value}%0AScore: ${score}/100`;
+ window.open(mail.replace(/\n/g,""));
 
- document.getElementById("complete-message")
- .innerText="Exam completed successfully – MSM Info Tech";
+ document.getElementById("complete").innerText =
+ "Exam completed. Result sent to MSM Info Tech.";
 }
 </script>
 </body>
