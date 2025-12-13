@@ -20,18 +20,18 @@ h1{text-align:center;color:#00e6ff;}
  box-shadow:0 0 25px rgba(0,0,0,0.8);
  margin-bottom:20px;
 }
-input[type=text]{
- width:100%;padding:12px;font-size:16px;
- border-radius:8px;border:none;outline:none;
-}
 button{
  background:#00e6ff;color:#000;
  padding:12px 25px;border:none;
  border-radius:8px;font-size:16px;
  cursor:pointer;margin-top:15px;
 }
-button:disabled{background:#555;color:#999;cursor:not-allowed;}
-#timer{font-size:22px;color:#ff5252;text-align:center;margin:15px 0;}
+button:disabled{background:#555;color:#999;}
+input[type=text]{
+ width:100%;padding:12px;
+ font-size:16px;border-radius:8px;border:none;
+}
+#timer{font-size:22px;color:#ff5252;text-align:center;}
 .question{display:none;margin-bottom:15px;}
 label{display:block;margin:6px 0;}
 #complete-message{color:#00ff88;font-size:18px;text-align:center;}
@@ -45,6 +45,22 @@ label{display:block;margin:6px 0;}
 
 <div id="timer"></div>
 
+<!-- INSTRUCTIONS -->
+<div class="card" id="instructions">
+<h3>📌 Exam Instructions</h3>
+<ul>
+<li>Exam duration: <b>3 Hours</b></li>
+<li>Total questions: <b>100</b></li>
+<li>Each question carries <b>1 mark</b></li>
+<li>No negative marking</li>
+<li>Do not refresh or close browser</li>
+<li>Auto scroll enabled – answer carefully</li>
+<li>Late entry not allowed</li>
+</ul>
+<p style="color:#ffcc00;"><b>Exam starts at 10:50 AM (13-12-2025)</b></p>
+</div>
+
+<!-- STUDENT DETAILS -->
 <div class="card">
 <h3>Student Details</h3>
 <input type="text" id="studentName" placeholder="Enter Student Name" disabled>
@@ -55,41 +71,52 @@ label{display:block;margin:6px 0;}
 <button id="submitBtn" onclick="submitExam()" style="display:none;">Submit Exam</button>
 
 <div id="complete-message"></div>
+
 </div>
 
 <script>
 // ================= EXAM TIME =================
-const examStart = new Date("2025-12-13T10:40:00");
+const examStart = new Date("2025-12-13T10:50:00");
 const examDuration = 3*60*60;
-let timer = examDuration;
+let time = examDuration;
 let interval;
 
-// ================= QUESTIONS (100 placeholder) =================
+// ================= QUESTIONS (DEMO – replace with your 100) =================
 const questions = Array.from({length:100},(_,i)=>({
- q:`Sample Question ${i+1}?`,
+ q:`Question ${i+1}?`,
  o:["Option A","Option B","Option C","Option D"],
  a:"Option A"
 }));
 
-// ================= RENDER =================
+// ================= RENDER + AUTO SCROLL =================
 const form=document.getElementById("quizForm");
 questions.forEach((q,i)=>{
  let d=document.createElement("div");
  d.className="question";
+ d.id="q"+i;
  d.innerHTML=`<p>${i+1}. ${q.q}</p>`+
- q.o.map(x=>`<label><input type="radio" name="q${i}" value="${x}"> ${x}</label>`).join("");
+ q.o.map(x=>`<label>
+ <input type="radio" name="q${i}" value="${x}"> ${x}</label>`).join("");
  form.appendChild(d);
+
+ d.querySelectorAll("input").forEach(r=>{
+  r.addEventListener("change",()=>{
+   if(i < questions.length-1){
+    document.getElementById("q"+(i+1))
+    .scrollIntoView({behavior:"smooth",block:"start"});
+   }
+  });
+ });
 });
 
 // ================= COUNTDOWN =================
+const timerDiv=document.getElementById("timer");
 function checkTime(){
  let now=new Date();
  if(now < examStart){
   let diff=Math.floor((examStart-now)/1000);
-  let h=Math.floor(diff/3600);
-  let m=Math.floor((diff%3600)/60);
-  let s=diff%60;
-  timerDiv.innerText=`Exam starts in ${h}:${m}:${s}`;
+  let m=Math.floor(diff/60), s=diff%60;
+  timerDiv.innerText=`Exam starts in ${m} min ${s} sec`;
   setTimeout(checkTime,1000);
  }else{
   timerDiv.innerText="Exam Started – Enter Name";
@@ -97,19 +124,17 @@ function checkTime(){
   document.getElementById("startBtn").disabled=false;
  }
 }
-const timerDiv=document.getElementById("timer");
 checkTime();
 
 // ================= START EXAM =================
 function startExam(){
  let name=document.getElementById("studentName").value.trim();
- if(!name){alert("Enter student name");return;}
-
+ if(!name){alert("Enter name");return;}
+ document.getElementById("instructions").style.display="none";
  document.querySelectorAll(".question").forEach(q=>q.style.display="block");
  document.getElementById("submitBtn").style.display="block";
  document.getElementById("studentName").disabled=true;
  document.getElementById("startBtn").disabled=true;
-
  document.documentElement.requestFullscreen();
  startTimer();
 }
@@ -117,12 +142,12 @@ function startExam(){
 // ================= TIMER =================
 function startTimer(){
  interval=setInterval(()=>{
-  let h=Math.floor(timer/3600);
-  let m=Math.floor((timer%3600)/60);
-  let s=timer%60;
+  let h=Math.floor(time/3600),
+      m=Math.floor((time%3600)/60),
+      s=time%60;
   timerDiv.innerText=`Time Left ${h}:${m}:${s}`;
-  if(timer<=0){submitExam();}
-  timer--;
+  if(time<=0) submitExam();
+  time--;
  },1000);
 }
 
@@ -131,7 +156,6 @@ function submitExam(){
  clearInterval(interval);
  let name=document.getElementById("studentName").value;
  let score=0;
-
  questions.forEach((q,i)=>{
   let a=document.querySelector(`input[name=q${i}]:checked`);
   if(a && a.value===q.a) score++;
@@ -144,10 +168,8 @@ function submitExam(){
  pdf.text(`Score: ${score}/100`,10,30);
  pdf.save("CCNA_Result.pdf");
 
- window.open(`https://wa.me/9353744038?text=Student:${name}%0AScore:${score}/100`);
-
- document.getElementById("complete-message").innerText=
- "Exam completed successfully – MSM Info Tech";
+ document.getElementById("complete-message")
+ .innerText="Exam completed successfully – MSM Info Tech";
 }
 </script>
 </body>
