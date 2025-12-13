@@ -1,206 +1,154 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CCNA 100 Marks Quiz</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    .question { margin-bottom: 15px; display: none; }
-    #timer { color: red; font-size: 20px; }
-    #message { font-size: 18px; color: blue; margin-bottom: 15px; }
-    button { padding: 10px 20px; font-size: 16px; margin-top: 20px; display: none; }
-    #student-name { padding:5px; font-size:16px; width:250px;}
-    #complete-message { font-size:18px; color:green; margin-top:20px; display:none;}
-  </style>
+<title>CCNA Online Exam</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+ margin:0;
+ font-family:Segoe UI,Arial;
+ background:linear-gradient(135deg,#000000,#0f2027,#203a43);
+ color:#fff;
+}
+.container{max-width:900px;margin:auto;padding:20px;}
+h1{text-align:center;color:#00e6ff;}
+.card{
+ background:#111;
+ padding:20px;
+ border-radius:12px;
+ box-shadow:0 0 25px rgba(0,0,0,0.8);
+ margin-bottom:20px;
+}
+input[type=text]{
+ width:100%;padding:12px;font-size:16px;
+ border-radius:8px;border:none;outline:none;
+}
+button{
+ background:#00e6ff;color:#000;
+ padding:12px 25px;border:none;
+ border-radius:8px;font-size:16px;
+ cursor:pointer;margin-top:15px;
+}
+button:disabled{background:#555;color:#999;cursor:not-allowed;}
+#timer{font-size:22px;color:#ff5252;text-align:center;margin:15px 0;}
+.question{display:none;margin-bottom:15px;}
+label{display:block;margin:6px 0;}
+#complete-message{color:#00ff88;font-size:18px;text-align:center;}
+</style>
 </head>
-<body>
-  <h1>CCNA 100 Marks Quiz</h1>
-  <div id="message">Exam will start at 12-12-2025 05:55 PM</div>
-  <div id="timer"></div>
-  <label>Student Name: <input type="text" id="student-name" placeholder="Enter your name" required></label>
-  <form id="quiz-form"></form>
-  <button id="submit-btn">Submit Exam</button>
-  <div id="complete-message"></div>
 
-  <script>
-  // --- 1. 100 Questions ---
-  const questions = [
-    {q:"Which device operates at Layer 1 of the OSI model?", options:["Switch","Router","Hub","Firewall"], answer:"Hub"},
-    {q:"Which cable is commonly used for connecting a PC to a switch?", options:["Coaxial cable","Fiber optic cable","Straight-through Ethernet cable","Console cable"], answer:"Straight-through Ethernet cable"},
-    {q:"A broadcast domain is created by which device?", options:["Hub","Switch","Router","Repeater"], answer:"Router"},
-    {q:"Which device breaks collision domains?", options:["Hub","Switch","Bridge","Both B and C"], answer:"Both B and C"},
-    {q:"Which layer is responsible for addressing and routing?", options:["Layer 2","Layer 3","Layer 5","Layer 7"], answer:"Layer 3"},
-    {q:"Which of the following is a valid private IP address?", options:["12.0.0.1","192.168.10.5","172.50.1.1","100.100.100.1"], answer:"192.168.10.5"},
-    {q:"What is the size of a MAC address?", options:["32 bits","48 bits","64 bits","128 bits"], answer:"48 bits"},
-    {q:"Which protocol works at OSI Layer 2?", options:["IP","ICMP","ARP","TCP"], answer:"ARP"},
-    {q:"Collision domains are reduced by using?", options:["Switch","Router","Hub","Both A & B"], answer:"Both A & B"},
-    {q:"Which IP class supports 16 million hosts?", options:["Class A","Class B","Class C","Class D"], answer:"Class A"},
-    {q:"What is the default subnet mask of Class C?", options:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.252"], answer:"255.255.255.0"},
-    {q:"Which layer converts data into signals?", options:["Data Link","Physical","Network","Transport"], answer:"Physical"},
-    {q:"Which device separates broadcast domains?", options:["Switch","Router","Hub","Bridge"], answer:"Router"},
-    {q:"Which topology provides the highest redundancy?", options:["Bus","Star","Mesh","Ring"], answer:"Mesh"},
-    {q:"Which cable supports the longest distance?", options:["Coaxial","Cat5","Cat6","Fiber optic"], answer:"Fiber optic"},
-    {q:"ARP is used for mapping?", options:["MAC to IP","IP to MAC","Port to IP","IP to Port"], answer:"IP to MAC"},
-    {q:"Which IP address is not valid?", options:["10.0.0.1","172.16.5.1","192.168.1.256","192.168.10.10"], answer:"192.168.1.256"},
-    {q:"A collision domain exists in?", options:["Hubs only","Switches only","Routers only","All devices"], answer:"Hubs only"},
-    {q:"Which OSI layer ensures packet delivery between networks?", options:["Transport","Network","Session","Presentation"], answer:"Network"},
-    {q:"Which one is a Layer 2 device?", options:["Router","Hub","Switch","Firewall"], answer:"Switch"},
-    {q:"Layer 4 of the OSI model is responsible for?", options:["Routing","End-to-end communication","Encryption","Encoding"], answer:"End-to-end communication"},
-    {q:"Which protocol uses port number 53?", options:["HTTP","FTP","DNS","Telnet"], answer:"DNS"},
-    {q:"TCP is a?", options:["Connection-oriented","Connectionless","Link-state","Distance vector"], answer:"Connection-oriented"},
-    {q:"UDP is used for?", options:["File transfer","Video streaming","Email","Web browsing"], answer:"Video streaming"},
-    {q:"Which layer adds the source and destination MAC address?", options:["Network","Transport","Data Link","Application"], answer:"Data Link"},
-    {q:"Which address is used for routing inside a network?", options:["MAC address","IP address","Port number","VLAN ID"], answer:"IP address"},
-    {q:"What is the broadcast IP of network 192.168.10.0/24?", options:["192.168.10.1","192.168.10.254","192.168.10.255","192.168.0.255"], answer:"192.168.10.255"},
-    {q:"What is the subnet mask for /27?", options:["255.255.255.0","255.255.255.128","255.255.255.224","255.255.255.240"], answer:"255.255.255.224"},
-    {q:"How many usable hosts for /29?", options:["2","4","6","8"], answer:"6"},
-    {q:"Network ID of 10.10.5.200/16?", options:["10.10.0.0","10.10.5.0","10.0.0.0","10.10.255.0"], answer:"10.10.0.0"},
-    {q:"/30 subnet is used for?", options:["LAN","WAN point-to-point links","Server networks","DMZ"], answer:"WAN point-to-point links"},
-    {q:"Tool to check connectivity?", options:["ipconfig","tracert","ping","nslookup"], answer:"ping"},
-    {q:"In subnetting, borrowed bits increase?", options:["Hosts","Networks","MAC addresses","ARP requests"], answer:"Networks"},
-    {q:"172.16.0.0 – 172.31.255.255 belongs to?", options:["Public","Private","Reserved","Loopback"], answer:"Private"},
-    {q:"Which IP is loopback address?", options:["127.0.0.1","255.255.255.255","224.0.0.1","0.0.0.0"], answer:"127.0.0.1"},
-    {q:"First usable IP of 192.168.1.0/26?", options:["192.168.1.0","192.168.1.1","192.168.1.64","192.168.1.62"], answer:"192.168.1.1"},
-    {q:"Which device resolves names to IP?", options:["DHCP","DNS","ARP","SMTP"], answer:"DNS"},
-    {q:"Network address of 192.168.5.130/25?", options:["192.168.5.0","192.168.5.128","192.168.5.255","192.168.5.64"], answer:"192.168.5.128"},
-    {q:"Which layer handles error detection using FCS?", options:["Layer 2","Layer 3","Layer 4","Layer 5"], answer:"Layer 2"},
-    {q:"Subnet mask 255.255.255.192 corresponds to?", options:["/24","/26","/28","/30"], answer:"/26"},
-    {q:"Command shows running configuration?", options:["show config","show run","show ip route","show version"], answer:"show run"},
-    {q:"Command enters global configuration mode?", options:["conf terminal","enable terminal","setup config","admin configure"], answer:"conf terminal"},
-    {q:"Assign IP to interface?", options:["ip add","assign ip","ip address X.X.X.X Y.Y.Y.Y","set ip"], answer:"ip address X.X.X.X Y.Y.Y.Y"},
-    {q:"Administrative distance of static route?", options:["0","1","90","120"], answer:"1"},
-    {q:"Command to create static route?", options:["ip route <network> <mask> <next-hop>","set route <network>","route add <network>","static <network> <gateway>"], answer:"ip route <network> <mask> <next-hop>"},
-    {q:"RIP uses which metric?", options:["Bandwidth","Hop count","Delay","Reliability"], answer:"Hop count"},
-    {q:"RIP version 2 supports?", options:["Classful routing","No subnet masks","Classless routing","No authentication"], answer:"Classless routing"},
-    {q:"Default administrative distance of EIGRP?", options:["90","110","120","1"], answer:"90"},
-    {q:"EIGRP uses which algorithm?", options:["SPF","Dijkstra","DUAL","Bellman-Ford"], answer:"DUAL"},
-    {q:"Which port does RIP use?", options:["TCP 23","UDP 69","UDP 520","TCP 179"], answer:"UDP 520"},
-    {q:"Default RIP timers are controlled by?", options:["update, invalid, flush","timeout, ttl, reset","update, reset, refresh","ack, nack, timeout"], answer:"update, invalid, flush"},
-    {q:"Displays EIGRP neighbors?", options:["show ip eigrp topology","show ip eigrp neighbors","show ip eigrp interfaces","show protocols"], answer:"show ip eigrp neighbors"},
-    {q:"Static routing is preferred when?", options:["network is small","network changes frequently","many routers exist","bandwidth is high"], answer:"network is small"},
-    {q:"Routing protocol uses multicast 224.0.0.10?", options:["RIP v1","RIP v2","EIGRP","OSPF"], answer:"EIGRP"},
-    {q:"In EIGRP, “feasible successor” refers to?", options:["Best neighbor","Backup route","Administrative distance","Load balancing route"], answer:"Backup route"},
-    {q:"Command shows routing table?", options:["show ip routing","show routing","show ip route","show route table"], answer:"show ip route"},
-    {q:"Maximum hop count in RIP?", options:["10","15","16","32"], answer:"16"},
-    {q:"Two equal-cost paths in router performs?", options:["Load balancing","Filtering","NAT","Blocking"], answer:"Load balancing"},
-    {q:"Command to advertise network in RIP?", options:["route network","network <network ID>","advertise <network>","add network"], answer:"network <network ID>"},
-    {q:"EIGRP supports unequal cost load balancing using?", options:["Cost","Delay","Variance","Bandwidth"], answer:"Variance"},
-    {q:"OSPF uses which algorithm?", options:["Bellman-Ford","SPF (Dijkstra)","DUAL","Flooding"], answer:"SPF (Dijkstra)"},
-    {q:"OSPF multicast address for DR/BDR?", options:["224.0.0.5","224.0.0.6","224.0.0.10","224.0.0.9"], answer:"224.0.0.6"},
-    {q:"OSPF uses which metric?", options:["Hop count","Delay","Bandwidth (Cost)","Reliability"], answer:"Bandwidth (Cost)"},
-    {q:"Default OSPF hello timer on broadcast networks?", options:["1 sec","5 sec","10 sec","30 sec"], answer:"10 sec"},
-    {q:"Which switching method has lowest latency?", options:["Store and forward","Cut-through","Fragment free","Transparent"], answer:"Cut-through"},
-    {q:"VLANs are used to?", options:["Increase collision domains","Increase broadcast domains","Separate broadcast domains","Decrease security"], answer:"Separate broadcast domains"},
-    {q:"Default VLAN on Cisco switch?", options:["VLAN 0","VLAN 1","VLAN 10","VLAN 99"], answer:"VLAN 1"},
-    {q:"Command shows all VLANs on switch?", options:["show vlan","show vlan brief","show switch vlan","show vlan list"], answer:"show vlan brief"},
-    {q:"Protocol for trunk negotiation?", options:["VTP","DTP","STP","LLDP"], answer:"DTP"},
-    {q:"Ports carry traffic from multiple VLANs?", options:["Access port","Trunk port","Routed port","Edge port"], answer:"Trunk port"},
-    {q:"STP prevents?", options:["Broadcast storms","VLAN creation","Routing loops","MAC learning"], answer:"Broadcast storms"},
-    {q:"Default STP priority?", options:["0","4096","32768","65536"], answer:"32768"},
-    {q:"PortFast enabled on?", options:["Access","Trunk","Root","All"], answer:"Access"},
-    {q:"RSTP is defined under which standard?", options:["802.1Q","802.1X","802.1D","802.1w"], answer:"802.1w"},
-    {q:"EtherChannel bundles multiple links into?", options:["Backup connection","One logical link","Separate VLANs","Layer 3 tunnel"], answer:"One logical link"},
-    {q:"LACP uses which protocol number?", options:["01","88","89","802"], answer:"89"},
-    {q:"Port security is used to limit?", options:["IP addresses","MAC addresses","Subnets","VLANs"], answer:"MAC addresses"},
-    {q:"Violation mode that shuts down port?", options:["Protect","Restrict","Shutdown","Warning"], answer:"Shutdown"},
-    {q:"VTP mode allows creation of VLANs?", options:["Client","Server","Transparent","Off"], answer:"Server"},
-    {q:"VTP operates at which layer?", options:["Layer 1","Layer 2","Layer 3","Layer 4"], answer:"Layer 2"}
-  ];
+<body oncontextmenu="return false;">
+<div class="container">
 
-  // --- 2. Render Questions + Auto-scroll ---
-  const quizForm = document.getElementById('quiz-form');
-  const submitBtn = document.getElementById('submit-btn');
-  const completeMsgDiv = document.getElementById('complete-message');
+<h1>CCNA 100 Marks Online Exam</h1>
 
-  questions.forEach((q,index)=>{
-    const div = document.createElement('div');
-    div.className = 'question';
-    div.id = `q${index}`;
-    div.innerHTML = `<p>${index+1}. ${q.q}</p>` +
-      q.options.map(opt=>`<label><input type="radio" name="q${index}" value="${opt}"> ${opt}</label><br>`).join('');
-    quizForm.appendChild(div);
+<div id="timer"></div>
 
-    div.querySelectorAll('input[type="radio"]').forEach(radio=>{
-        radio.addEventListener('change', ()=>{
-            const next = document.getElementById(`q${index+1}`);
-            if(next) next.scrollIntoView({behavior:'smooth', block:'start'});
-        });
-    });
-  });
+<div class="card">
+<h3>Student Details</h3>
+<input type="text" id="studentName" placeholder="Enter Student Name" disabled>
+<button id="startBtn" onclick="startExam()" disabled>Start Exam</button>
+</div>
 
-  // --- 3. Timer & Auto-start ---
-  const messageDiv = document.getElementById('message');
-  const timerDiv = document.getElementById('timer');
+<form id="quizForm" class="card"></form>
+<button id="submitBtn" onclick="submitExam()" style="display:none;">Submit Exam</button>
 
-  const examStart = new Date("2025-12-12T17:55:00"); // 12-12-2025 05:55 PM
-  const examDuration = 3*60*60;
-  let timer = examDuration;
-  let interval;
+<div id="complete-message"></div>
+</div>
 
-  function startExam() {
-    const studentNameInput = document.getElementById('student-name');
-    if(studentNameInput.value.trim()===""){ alert("Please enter your name"); return; }
+<script>
+// ================= EXAM TIME =================
+const examStart = new Date("2025-12-13T10:40:00");
+const examDuration = 3*60*60;
+let timer = examDuration;
+let interval;
 
-    messageDiv.innerText = "Exam Started!";
-    document.querySelectorAll('.question').forEach(q=>q.style.display='block');
-    submitBtn.style.display='inline-block';
-    studentNameInput.disabled = true;
+// ================= QUESTIONS (100 placeholder) =================
+const questions = Array.from({length:100},(_,i)=>({
+ q:`Sample Question ${i+1}?`,
+ o:["Option A","Option B","Option C","Option D"],
+ a:"Option A"
+}));
 
-    interval = setInterval(()=>{
-      let h=Math.floor(timer/3600), m=Math.floor((timer%3600)/60), s=timer%60;
-      timerDiv.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-      if(timer<=0){ clearInterval(interval); submitExam(); }
-      timer--;
-    },1000);
-  }
+// ================= RENDER =================
+const form=document.getElementById("quizForm");
+questions.forEach((q,i)=>{
+ let d=document.createElement("div");
+ d.className="question";
+ d.innerHTML=`<p>${i+1}. ${q.q}</p>`+
+ q.o.map(x=>`<label><input type="radio" name="q${i}" value="${x}"> ${x}</label>`).join("");
+ form.appendChild(d);
+});
 
-  function checkTime() {
-    const now = new Date();
-    if(now >= examStart) { startExam(); }
-    else {
-      const diff = Math.floor((examStart - now)/1000);
-      let h=Math.floor(diff/3600), m=Math.floor((diff%3600)/60), s=diff%60;
-      timerDiv.innerText = `Exam starts in ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-      setTimeout(checkTime, 1000);
-    }
-  }
+// ================= COUNTDOWN =================
+function checkTime(){
+ let now=new Date();
+ if(now < examStart){
+  let diff=Math.floor((examStart-now)/1000);
+  let h=Math.floor(diff/3600);
+  let m=Math.floor((diff%3600)/60);
+  let s=diff%60;
+  timerDiv.innerText=`Exam starts in ${h}:${m}:${s}`;
+  setTimeout(checkTime,1000);
+ }else{
+  timerDiv.innerText="Exam Started – Enter Name";
+  document.getElementById("studentName").disabled=false;
+  document.getElementById("startBtn").disabled=false;
+ }
+}
+const timerDiv=document.getElementById("timer");
+checkTime();
 
-  checkTime();
+// ================= START EXAM =================
+function startExam(){
+ let name=document.getElementById("studentName").value.trim();
+ if(!name){alert("Enter student name");return;}
 
-  // --- 4. Submit Exam ---
-  submitBtn.addEventListener('click', submitExam);
-  function submitExam(){
-    const studentName = document.getElementById('student-name').value || "Unknown";
-    let score=0;
-    questions.forEach((q,index)=>{
-      const ans=document.querySelector(`input[name="q${index}"]:checked`);
-      if(ans && ans.value===q.answer) score++;
-    });
+ document.querySelectorAll(".question").forEach(q=>q.style.display="block");
+ document.getElementById("submitBtn").style.display="block";
+ document.getElementById("studentName").disabled=true;
+ document.getElementById("startBtn").disabled=true;
 
-    // PDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text("CCNA Exam Report", 10, 10);
-    doc.text(`Student: ${studentName}`, 10, 20);
-    doc.text(`Score: ${score}/${questions.length}`, 10, 30);
-    doc.save("CCNA_Exam_Report.pdf");
+ document.documentElement.requestFullscreen();
+ startTimer();
+}
 
-    // WhatsApp
-    const whatsappNumber = "9353744038";
-    const waMsg = `CCNA Exam Report\nStudent: ${studentName}\nScore: ${score}/${questions.length}`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMsg)}`, "_blank");
+// ================= TIMER =================
+function startTimer(){
+ interval=setInterval(()=>{
+  let h=Math.floor(timer/3600);
+  let m=Math.floor((timer%3600)/60);
+  let s=timer%60;
+  timerDiv.innerText=`Time Left ${h}:${m}:${s}`;
+  if(timer<=0){submitExam();}
+  timer--;
+ },1000);
+}
 
-    // Email
-    const email = "msminfotech25@gmail.com";
-    const subject = "CCNA Exam Report";
-    const body = `Student: ${studentName}\nScore: ${score}/${questions.length}`;
-    window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+// ================= SUBMIT =================
+function submitExam(){
+ clearInterval(interval);
+ let name=document.getElementById("studentName").value;
+ let score=0;
 
-    // Complete Message
-    completeMsgDiv.style.display='block';
-    completeMsgDiv.innerText=`Exam completed! For any queries contact MSM Info Tech: 9353744038 / msminfotech25@gmail.com`;
-    clearInterval(interval);
-  }
-  </script>
+ questions.forEach((q,i)=>{
+  let a=document.querySelector(`input[name=q${i}]:checked`);
+  if(a && a.value===q.a) score++;
+ });
+
+ const {jsPDF}=window.jspdf;
+ const pdf=new jsPDF();
+ pdf.text("CCNA Exam Report",10,10);
+ pdf.text(`Student: ${name}`,10,20);
+ pdf.text(`Score: ${score}/100`,10,30);
+ pdf.save("CCNA_Result.pdf");
+
+ window.open(`https://wa.me/9353744038?text=Student:${name}%0AScore:${score}/100`);
+
+ document.getElementById("complete-message").innerText=
+ "Exam completed successfully – MSM Info Tech";
+}
+</script>
 </body>
 </html>
