@@ -67,7 +67,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>CCNA 100 Marks Examination</h1>
+    <h1>CCNA 100 Marks Quiz</h1>
     <div class="instruction" id="instruction">
       <h2>Instructions</h2>
       <p><strong>Total Questions:</strong> 100</p>
@@ -80,7 +80,7 @@
       <button id="start-btn">Start Exam</button>
     </div>
 
-    <div id="message">Exam will start at 13-Dec-2025 12:10 PM</div>
+    <div id="message">Exam will start at 14-Dec-2025 10:00 AM</div>
     <div id="timer"></div>
     <form id="quiz-form"></form>
     <button id="submit-btn">Submit Exam</button>
@@ -88,36 +88,114 @@
   </div>
 
   <script>
-    // --- 1. Questions (100 sample questions, 20 new questions added to original 80) ---
+    // --- 100 Questions (80 previous + 20 new) ---
     const questions = [
-      /* --- original 80 questions --- */
+      // --- 1 to 80 questions ---
       {q:"Which device operates at Layer 1 of the OSI model?", options:["Switch","Router","Hub","Firewall"], answer:"Hub"},
       {q:"Which cable is commonly used for connecting a PC to a switch?", options:["Coaxial cable","Fiber optic cable","Straight-through Ethernet cable","Console cable"], answer:"Straight-through Ethernet cable"},
-      /* ... (rest of 78 questions) ... */
-      /* --- 20 new questions --- */
-      {q:"What protocol is used to automatically assign IP addresses?", options:["DNS","DHCP","FTP","SMTP"], answer:"DHCP"},
-      {q:"Which command shows interface status on a Cisco switch?", options:["show interfaces","show ip interface brief","show running-config","show version"], answer:"show ip interface brief"},
-      {q:"Which IP address is reserved for APIPA?", options:["169.254.x.x","192.168.x.x","10.x.x.x","172.16.x.x"], answer:"169.254.x.x"},
-      {q:"Which type of NAT translates multiple private IPs to a single public IP?", options:["Static NAT","Dynamic NAT","PAT","Overload NAT"], answer:"PAT"},
-      {q:"Which protocol is used for secure remote login?", options:["Telnet","SSH","FTP","HTTP"], answer:"SSH"},
-      {q:"Which protocol provides error recovery but no congestion control?", options:["TCP","UDP","ICMP","ARP"], answer:"UDP"},
-      {q:"What is the default gateway used for?", options:["Routing traffic outside local network","Assign IP addresses","Name resolution","Encryption"], answer:"Routing traffic outside local network"},
-      {q:"Which wireless standard operates at 5 GHz?", options:["802.11b","802.11g","802.11a","802.11n"], answer:"802.11a"},
-      {q:"Which device is used to connect two different networks?", options:["Switch","Router","Hub","Repeater"], answer:"Router"},
-      {q:"Which command displays the ARP table?", options:["show arp","ping","show ip route","tracert"], answer:"show arp"},
-      {q:"What is the function of VLAN?", options:["Separate collision domains","Separate broadcast domains","Increase IP addresses","Increase bandwidth"], answer:"Separate broadcast domains"},
-      {q:"Which protocol resolves MAC to IP?", options:["DHCP","ARP","DNS","ICMP"], answer:"ARP"},
-      {q:"Which command pings a host continuously?", options:["ping -t","ping -c","tracert","show ping"], answer:"ping -t"},
-      {q:"Which OSI layer is responsible for encryption?", options:["Presentation","Application","Transport","Network"], answer:"Presentation"},
-      {q:"What is the default subnet mask for Class B?", options:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.255"], answer:"255.255.0.0"},
-      {q:"Which IP address is used for loopback testing?", options:["127.0.0.1","0.0.0.0","255.255.255.255","192.168.1.1"], answer:"127.0.0.1"},
-      {q:"Which protocol uses port 23?", options:["FTP","SSH","Telnet","HTTP"], answer:"Telnet"},
-      {q:"Which type of cable is used for connecting similar devices?", options:["Crossover","Straight-through","Coaxial","Fiber"], answer:"Crossover"},
-      {q:"Which routing protocol uses hop count as metric?", options:["OSPF","RIP","EIGRP","BGP"], answer:"RIP"},
-      {q:"Which protocol encrypts email?", options:["SMTP","IMAP","POP3","SMTPS"], answer:"SMTPS"}
+      {q:"A broadcast domain is created by which device?", options:["Hub","Switch","Router","Repeater"], answer:"Router"},
+      {q:"Which device breaks collision domains?", options:["Hub","Switch","Bridge","Both B and C"], answer:"Both B and C"},
+      {q:"Which layer is responsible for addressing and routing?", options:["Layer 2","Layer 3","Layer 5","Layer 7"], answer:"Layer 3"},
+      {q:"Which of the following is a valid private IP address?", options:["12.0.0.1","192.168.10.5","172.50.1.1","100.100.100.1"], answer:"192.168.10.5"},
+      {q:"What is the size of a MAC address?", options:["32 bits","48 bits","64 bits","128 bits"], answer:"48 bits"},
+      {q:"Which protocol works at OSI Layer 2?", options:["IP","ICMP","ARP","TCP"], answer:"ARP"},
+      {q:"Collision domains are reduced by using?", options:["Switch","Router","Hub","Both A & B"], answer:"Both A & B"},
+      {q:"Which IP class supports 16 million hosts?", options:["Class A","Class B","Class C","Class D"], answer:"Class A"},
+      {q:"What is the default subnet mask of Class C?", options:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.252"], answer:"255.255.255.0"},
+      {q:"Which layer converts data into signals?", options:["Data Link","Physical","Network","Transport"], answer:"Physical"},
+      {q:"Which device separates broadcast domains?", options:["Switch","Router","Hub","Bridge"], answer:"Router"},
+      {q:"Which topology provides the highest redundancy?", options:["Bus","Star","Mesh","Ring"], answer:"Mesh"},
+      {q:"Which cable supports the longest distance?", options:["Coaxial","Cat5","Cat6","Fiber optic"], answer:"Fiber optic"},
+      {q:"ARP is used for mapping?", options:["MAC to IP","IP to MAC","Port to IP","IP to Port"], answer:"IP to MAC"},
+      {q:"Which IP address is not valid?", options:["10.0.0.1","172.16.5.1","192.168.1.256","192.168.10.10"], answer:"192.168.1.256"},
+      {q:"A collision domain exists in?", options:["Hubs only","Switches only","Routers only","All devices"], answer:"Hubs only"},
+      {q:"Which OSI layer ensures packet delivery between networks?", options:["Transport","Network","Session","Presentation"], answer:"Network"},
+      {q:"Which one is a Layer 2 device?", options:["Router","Hub","Switch","Firewall"], answer:"Switch"},
+      {q:"Layer 4 of the OSI model is responsible for?", options:["Routing","End-to-end communication","Encryption","Encoding"], answer:"End-to-end communication"},
+      {q:"Which protocol uses port number 53?", options:["HTTP","FTP","DNS","Telnet"], answer:"DNS"},
+      {q:"TCP is a?", options:["Connection-oriented","Connectionless","Link-state","Distance vector"], answer:"Connection-oriented"},
+      {q:"UDP is used for?", options:["File transfer","Video streaming","Email","Web browsing"], answer:"Video streaming"},
+      {q:"Which layer adds the source and destination MAC address?", options:["Network","Transport","Data Link","Application"], answer:"Data Link"},
+      {q:"Which address is used for routing inside a network?", options:["MAC address","IP address","Port number","VLAN ID"], answer:"IP address"},
+      {q:"What is the broadcast IP of network 192.168.10.0/24?", options:["192.168.10.1","192.168.10.254","192.168.10.255","192.168.0.255"], answer:"192.168.10.255"},
+      {q:"What is the subnet mask for /27?", options:["255.255.255.0","255.255.255.128","255.255.255.224","255.255.255.240"], answer:"255.255.255.224"},
+      {q:"How many usable hosts for /29?", options:["2","4","6","8"], answer:"6"},
+      {q:"Network ID of 10.10.5.200/16?", options:["10.10.0.0","10.10.5.0","10.0.0.0","10.10.255.0"], answer:"10.10.0.0"},
+      {q:"/30 subnet is used for?", options:["LAN","WAN point-to-point links","Server networks","DMZ"], answer:"WAN point-to-point links"},
+      {q:"Tool to check connectivity?", options:["ipconfig","tracert","ping","nslookup"], answer:"ping"},
+      {q:"In subnetting, borrowed bits increase?", options:["Hosts","Networks","MAC addresses","ARP requests"], answer:"Networks"},
+      {q:"172.16.0.0 – 172.31.255.255 belongs to?", options:["Public","Private","Reserved","Loopback"], answer:"Private"},
+      {q:"Which IP is loopback address?", options:["127.0.0.1","255.255.255.255","224.0.0.1","0.0.0.0"], answer:"127.0.0.1"},
+      {q:"First usable IP of 192.168.1.0/26?", options:["192.168.1.0","192.168.1.1","192.168.1.64","192.168.1.62"], answer:"192.168.1.1"},
+      {q:"Which device resolves names to IP?", options:["DHCP","DNS","ARP","SMTP"], answer:"DNS"},
+      {q:"Network address of 192.168.5.130/25?", options:["192.168.5.0","192.168.5.128","192.168.5.255","192.168.5.64"], answer:"192.168.5.128"},
+      {q:"Which layer handles error detection using FCS?", options:["Layer 2","Layer 3","Layer 4","Layer 5"], answer:"Layer 2"},
+      {q:"Subnet mask 255.255.255.192 corresponds to?", options:["/24","/26","/28","/30"], answer:"/26"},
+      {q:"Command shows running configuration?", options:["show config","show run","show ip route","show version"], answer:"show run"},
+      {q:"Command enters global configuration mode?", options:["conf terminal","enable terminal","setup config","admin configure"], answer:"conf terminal"},
+      {q:"Assign IP to interface?", options:["ip add","assign ip","ip address X.X.X.X Y.Y.Y.Y","set ip"], answer:"ip address X.X.X.X Y.Y.Y.Y"},
+      {q:"Administrative distance of static route?", options:["0","1","90","120"], answer:"1"},
+      {q:"Command to create static route?", options:["ip route <network> <mask> <next-hop>","set route <network>","route add <network>","static <network> <gateway>"], answer:"ip route <network> <mask> <next-hop>"},
+      {q:"RIP uses which metric?", options:["Bandwidth","Hop count","Delay","Reliability"], answer:"Hop count"},
+      {q:"RIP version 2 supports?", options:["Classful routing","No subnet masks","Classless routing","No authentication"], answer:"Classless routing"},
+      {q:"Default administrative distance of EIGRP?", options:["90","110","120","1"], answer:"90"},
+      {q:"EIGRP uses which algorithm?", options:["SPF","Dijkstra","DUAL","Bellman-Ford"], answer:"DUAL"},
+      {q:"Which port does RIP use?", options:["TCP 23","UDP 69","UDP 520","TCP 179"], answer:"UDP 520"},
+      {q:"Default RIP timers are controlled by?", options:["update, invalid, flush","timeout, ttl, reset","update, reset, refresh","ack, nack, timeout"], answer:"update, invalid, flush"},
+      {q:"Displays EIGRP neighbors?", options:["show ip eigrp topology","show ip eigrp neighbors","show ip eigrp interfaces","show protocols"], answer:"show ip eigrp neighbors"},
+      {q:"Static routing is preferred when?", options:["network is small","network changes frequently","many routers exist","bandwidth is high"], answer:"network is small"},
+      {q:"Routing protocol uses multicast 224.0.0.10?", options:["RIP v1","RIP v2","EIGRP","OSPF"], answer:"EIGRP"},
+      {q:"In EIGRP, “feasible successor” refers to?", options:["Best neighbor","Backup route","Administrative distance","Load balancing route"], answer:"Backup route"},
+      {q:"Command shows routing table?", options:["show ip routing","show routing","show ip route","show route table"], answer:"show ip route"},
+      {q:"Maximum hop count in RIP?", options:["10","15","16","32"], answer:"16"},
+      {q:"Two equal-cost paths in router performs?", options:["Load balancing","Filtering","NAT","Blocking"], answer:"Load balancing"},
+      {q:"Command to advertise network in RIP?", options:["route network","network <network ID>","advertise <network>","add network"], answer:"network <network ID>"},
+      {q:"EIGRP supports unequal cost load balancing using?", options:["Cost","Delay","Variance","Bandwidth"], answer:"Variance"},
+      {q:"OSPF uses which algorithm?", options:["Bellman-Ford","SPF (Dijkstra)","DUAL","Flooding"], answer:"SPF (Dijkstra)"},
+      {q:"OSPF multicast address for DR/BDR?", options:["224.0.0.5","224.0.0.6","224.0.0.10","224.0.0.9"], answer:"224.0.0.6"},
+      {q:"OSPF uses which metric?", options:["Hop count","Delay","Bandwidth (Cost)","Reliability"], answer:"Bandwidth (Cost)"},
+      {q:"Default OSPF hello timer on broadcast networks?", options:["1 sec","5 sec","10 sec","30 sec"], answer:"10 sec"},
+      {q:"Which switching method has lowest latency?", options:["Store and forward","Cut-through","Fragment free","Transparent"], answer:"Cut-through"},
+      {q:"VLANs are used to?", options:["Increase collision domains","Increase broadcast domains","Separate broadcast domains","Decrease security"], answer:"Separate broadcast domains"},
+      {q:"Default VLAN on Cisco switch?", options:["VLAN 0","VLAN 1","VLAN 10","VLAN 99"], answer:"VLAN 1"},
+      {q:"Command shows all VLANs on switch?", options:["show vlan","show vlan brief","show switch vlan","show vlan list"], answer:"show vlan brief"},
+      {q:"Protocol for trunk negotiation?", options:["VTP","DTP","STP","LLDP"], answer:"DTP"},
+      {q:"Ports carry traffic from multiple VLANs?", options:["Access port","Trunk port","Routed port","Edge port"], answer:"Trunk port"},
+      {q:"STP prevents?", options:["Broadcast storms","VLAN creation","Routing loops","MAC learning"], answer:"Broadcast storms"},
+      {q:"Default STP priority?", options:["0","4096","32768","65536"], answer:"32768"},
+      {q:"PortFast enabled on?", options:["Access","Trunk","Root","All"], answer:"Access"},
+      {q:"RSTP is defined under which standard?", options:["802.1Q","802.1X","802.1D","802.1w"], answer:"802.1w"},
+      {q:"EtherChannel bundles multiple links into?", options:["Backup connection","One logical link","Separate VLANs","Layer 3 tunnel"], answer:"One logical link"},
+      {q:"LACP uses which protocol number?", options:["01","88","89","802"], answer:"89"},
+      {q:"Port security is used to limit?", options:["IP addresses","MAC addresses","Subnets","VLANs"], answer:"MAC addresses"},
+      {q:"Violation mode that shuts down port?", options:["Protect","Restrict","Shutdown","Warning"], answer:"Shutdown"},
+      {q:"VTP mode allows creation of VLANs?", options:["Client","Server","Transparent","Off"], answer:"Server"},
+      {q:"VTP operates at which layer?", options:["Layer 1","Layer 2","Layer 3","Layer 4"], answer:"Layer 2"},
+
+      // --- Additional 20 questions ---
+      {q:"Which protocol is used to securely manage network devices?", options:["HTTP","SNMPv3","Telnet","FTP"], answer:"SNMPv3"},
+      {q:"Which NAT type maps multiple private IPs to a single public IP?", options:["Static NAT","Dynamic NAT","PAT","Port Forwarding"], answer:"PAT"},
+      {q:"OSPF uses which multicast address to communicate with all routers?", options:["224.0.0.5","224.0.0.6","224.0.0.9","224.0.0.10"], answer:"224.0.0.5"},
+      {q:"Which spanning-tree port state immediately forwards traffic?", options:["Listening","Learning","Forwarding","Blocking"], answer:"Forwarding"},
+      {q:"VTP pruning is used to?", options:["Reduce unnecessary VLAN traffic","Increase VLANs","Create VLANs","Delete VLANs"], answer:"Reduce unnecessary VLAN traffic"},
+      {q:"Which routing protocol is distance vector?", options:["OSPF","RIP","EIGRP","IS-IS"], answer:"RIP"},
+      {q:"EIGRP uses which type of routing protocol?", options:["Distance vector","Link state","Hybrid","Path vector"], answer:"Hybrid"},
+      {q:"Which layer of OSI is responsible for encryption?", options:["Application","Presentation","Session","Transport"], answer:"Presentation"},
+      {q:"Which device uses MAC address to forward traffic?", options:["Router","Switch","Hub","Firewall"], answer:"Switch"},
+      {q:"Which IPv6 address type is equivalent to IPv4 broadcast?", options:["Unicast","Multicast","Anycast","There is no broadcast in IPv6"], answer:"There is no broadcast in IPv6"},
+      {q:"SSH operates on which TCP port?", options:["22","23","21","25"], answer:"22"},
+      {q:"Which protocol assigns IP addresses dynamically?", options:["DNS","DHCP","ARP","ICMP"], answer:"DHCP"},
+      {q:"RIP updates are sent every?", options:["15 seconds","30 seconds","60 seconds","90 seconds"], answer:"30 seconds"},
+      {q:"Which layer provides end-to-end error recovery?", options:["Network","Transport","Data Link","Physical"], answer:"Transport"},
+      {q:"Port 443 is used by?", options:["HTTP","HTTPS","FTP","SMTP"], answer:"HTTPS"},
+      {q:"Which command shows interface status on Cisco switch?", options:["show ip route","show interfaces","show running-config","show vlan"], answer:"show interfaces"},
+      {q:"Which VPN type uses SSL for secure remote access?", options:["IPSec VPN","SSL VPN","GRE VPN","MPLS VPN"], answer:"SSL VPN"},
+      {q:"The loopback interface is used for?", options:["Testing","Routing","Forwarding","Filtering"], answer:"Testing"},
+      {q:"Which protocol prevents routing loops?", options:["RIP","OSPF","STP","EIGRP"], answer:"STP"},
+      {q:"Which command saves configuration to NVRAM?", options:["copy running-config startup-config","write erase","reload","show run"], answer:"copy running-config startup-config"}
     ];
 
-    // --- 2. Elements ---
+    // --- Elements ---
     const instructionDiv = document.getElementById('instruction');
     const startBtn = document.getElementById('start-btn');
     const studentNameInput = document.getElementById('student-name');
@@ -127,31 +205,27 @@
     const timerDiv = document.getElementById('timer');
     const completeMsgDiv = document.getElementById('complete-message');
 
-    const examStart = new Date("2025-12-13T12:10:00");
+    const examStart = new Date("2025-12-14T10:00:00"); // Updated exam date & time
     const examDuration = 3*60*60; // 3 hours
     let timer = examDuration;
     let interval;
 
-    // --- 3. Show Instructions ---
     instructionDiv.style.display='block';
 
-    // --- 4. Enable Start Exam ---
     startBtn.addEventListener('click', ()=>{
       const now = new Date();
       if(now < examStart){
-        alert("Exam has not started yet. Please wait until 12:10 PM on 13-Dec-2025.");
+        alert("Exam has not started yet. Please wait until 10:00 AM on 14-Dec-2025.");
         return;
       }
       const studentName = studentNameInput.value.trim();
       if(studentName===""){ alert("Please enter your name"); return; }
 
-      // Hide instructions, show quiz
       instructionDiv.style.display='none';
       messageDiv.innerText = "Exam Started!";
       quizForm.style.display='block';
       submitBtn.style.display='inline-block';
 
-      // Render questions
       questions.forEach((q,index)=>{
         const div = document.createElement('div');
         div.className='question';
@@ -168,7 +242,6 @@
         });
       });
 
-      // Start Timer
       interval = setInterval(()=>{
         let h=Math.floor(timer/3600), m=Math.floor((timer%3600)/60), s=timer%60;
         timerDiv.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
@@ -177,7 +250,6 @@
       },1000);
     });
 
-    // --- 5. Submit Exam ---
     submitBtn.addEventListener('click', submitExam);
     function submitExam(){
       const studentName = studentNameInput.value.trim() || "Unknown";
@@ -187,7 +259,6 @@
         if(ans && ans.value===q.answer) score++;
       });
 
-      // PDF
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       doc.text("CCNA Exam Report", 10, 10);
@@ -195,18 +266,15 @@
       doc.text(`Score: ${score}/${questions.length}`, 10, 30);
       doc.save("CCNA_Exam_Report.pdf");
 
-      // WhatsApp
       const whatsappNumber = "9353744038";
       const waMsg = `CCNA Exam Report\nStudent: ${studentName}\nScore: ${score}/${questions.length}`;
       window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMsg)}`, "_blank");
 
-      // Email
       const email = "msminfotech25@gmail.com";
       const subject = "CCNA Exam Report";
       const body = `Student: ${studentName}\nScore: ${score}/${questions.length}`;
       window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
 
-      // Complete Message
       completeMsgDiv.style.display='block';
       completeMsgDiv.innerText=`Exam completed! For any queries contact MSM Info Tech: 9353744038 / msminfotech25@gmail.com`;
       clearInterval(interval);
