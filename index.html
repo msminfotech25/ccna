@@ -196,89 +196,9 @@
     ];
 
     // --- Elements ---
-    const instructionDiv = document.getElementById('instruction');
-    const startBtn = document.getElementById('start-btn');
-    const studentNameInput = document.getElementById('student-name');
-    const messageDiv = document.getElementById('message');
-    const quizForm = document.getElementById('quiz-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const timerDiv = document.getElementById('timer');
-    const completeMsgDiv = document.getElementById('complete-message');
+    const 
 
-    const examStart = new Date("2025-12-14T10:00:00"); // Updated exam date & time
-    const examDuration = 3*60*60; // 3 hours
-    let timer = examDuration;
-    let interval;
+</body
 
-    instructionDiv.style.display='block';
+</html
 
-    startBtn.addEventListener('click', ()=>{
-      const now = new Date();
-      if(now < examStart){
-        alert("Exam has not started yet. Please wait until 10:00 AM on 14-Dec-2025.");
-        return;
-      }
-      const studentName = studentNameInput.value.trim();
-      if(studentName===""){ alert("Please enter your name"); return; }
-
-      instructionDiv.style.display='none';
-      messageDiv.innerText = "Exam Started!";
-      quizForm.style.display='block';
-      submitBtn.style.display='inline-block';
-
-      questions.forEach((q,index)=>{
-        const div = document.createElement('div');
-        div.className='question';
-        div.id=`q${index}`;
-        div.innerHTML = `<p>${index+1}. ${q.q}</p>`+
-          q.options.map(opt=>`<label><input type="radio" name="q${index}" value="${opt}"> ${opt}</label><br>`).join('');
-        quizForm.appendChild(div);
-
-        div.querySelectorAll('input[type="radio"]').forEach(radio=>{
-          radio.addEventListener('change', ()=>{
-            const next = document.getElementById(`q${index+1}`);
-            if(next) next.scrollIntoView({behavior:'smooth', block:'start'});
-          });
-        });
-      });
-
-      interval = setInterval(()=>{
-        let h=Math.floor(timer/3600), m=Math.floor((timer%3600)/60), s=timer%60;
-        timerDiv.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        if(timer<=0){ clearInterval(interval); submitExam(); }
-        timer--;
-      },1000);
-    });
-
-    submitBtn.addEventListener('click', submitExam);
-    function submitExam(){
-      const studentName = studentNameInput.value.trim() || "Unknown";
-      let score=0;
-      questions.forEach((q,index)=>{
-        const ans=document.querySelector(`input[name="q${index}"]:checked`);
-        if(ans && ans.value===q.answer) score++;
-      });
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text("CCNA Exam Report", 10, 10);
-      doc.text(`Student: ${studentName}`, 10, 20);
-      doc.text(`Score: ${score}/${questions.length}`, 10, 30);
-      doc.save("CCNA_Exam_Report.pdf");
-
-      const whatsappNumber = "9353744038";
-      const waMsg = `CCNA Exam Report\nStudent: ${studentName}\nScore: ${score}/${questions.length}`;
-      window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMsg)}`, "_blank");
-
-      const email = "msminfotech25@gmail.com";
-      const subject = "CCNA Exam Report";
-      const body = `Student: ${studentName}\nScore: ${score}/${questions.length}`;
-      window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
-
-      completeMsgDiv.style.display='block';
-      completeMsgDiv.innerText=`Exam completed! For any queries contact MSM Info Tech: 9353744038 / msminfotech25@gmail.com`;
-      clearInterval(interval);
-    }
-  </script>
-</body>
-</html>
