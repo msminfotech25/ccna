@@ -4,214 +4,174 @@
   <title>CCNA 100 Marks Quiz</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
-      color: #fff;
+    body{
+      font-family:Arial,sans-serif;
+      background:linear-gradient(135deg,#1e3c72,#2a5298);
+      color:#fff;margin:0;padding:0
     }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 30px;
-      background: rgba(0,0,0,0.7);
-      border-radius: 15px;
-      margin-top: 50px;
+    .container{
+      max-width:900px;margin:50px auto;
+      padding:30px;background:rgba(0,0,0,0.7);
+      border-radius:15px
     }
-    h1, h2 {
-      text-align: center;
-      color: #ffd700;
+    h1,h2{text-align:center;color:#ffd700}
+    .instruction,#quiz-form,#complete-message{display:none}
+    .question{
+      background:rgba(255,255,255,0.1);
+      padding:15px;border-radius:10px;margin-bottom:20px
     }
-    .instruction, #quiz-form, #complete-message {
-      display: none;
+    button{
+      padding:12px 25px;font-size:16px;
+      background:#ffd700;border:none;
+      border-radius:8px;cursor:pointer
     }
-    label {
-      font-size: 16px;
-    }
-    input[type="text"] {
-      padding: 5px;
-      font-size: 16px;
-      width: 250px;
-      margin-top: 10px;
-    }
-    button {
-      padding: 12px 25px;
-      font-size: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-      background: #ffd700;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-    }
-    .question {
-      margin-bottom: 20px;
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 10px;
-    }
-    #timer {
-      font-size: 20px;
-      text-align: center;
-      margin-bottom: 15px;
-      color: #ff4c4c;
-    }
-    #message {
-      font-size: 18px;
-      text-align: center;
-      margin-bottom: 15px;
-      color: #00ffff;
-    }
+    #timer{text-align:center;font-size:20px;color:#ff4c4c}
+    #message{text-align:center;font-size:18px;color:#00ffff}
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>CCNA 100 Marks Quiz</h1>
+<div class="container">
+  <h1>CCNA 100 Marks Quiz</h1>
 
-    <div class="instruction" id="instruction">
-      <h2>Instructions</h2>
-      <p><strong>Total Questions:</strong> 100</p>
-      <p><strong>Duration:</strong> 3 Hours</p>
-      <p><strong>Each Question Carries:</strong> 1 mark</p>
-      <p><strong>Negative Marking:</strong> None</p>
-      <p><strong>Auto Scroll:</strong> Enabled</p>
-      <p><strong>Important:</strong> Do not refresh your browser during the exam</p>
-
-      <label>
-        Enter Student Name:
-        <input type="text" id="student-name" placeholder="Your name">
-      </label><br>
-
-      <button id="start-btn">Start Exam</button>
-    </div>
-
-    <div id="message">Exam will start at 25-Jan-2026 11:00 AM</div>
-    <div id="timer"></div>
-    <form id="quiz-form"></form>
-    <button id="submit-btn" style="display:none;">Submit Exam</button>
-    <div id="complete-message"></div>
+  <div class="instruction" id="instruction">
+    <h2>Instructions</h2>
+    <p>Total Questions: 100</p>
+    <p>Duration: 3 Hours</p>
+    <p>Each Question: 1 Mark</p>
+    <p>No Negative Mark</p>
+    <label>
+      Student Name:
+      <input type="text" id="student-name">
+    </label><br><br>
+    <button id="start-btn">Start Exam</button>
   </div>
 
+  <div id="message">Exam will start at 25-Jan-2026 11:00 AM</div>
+  <div id="timer"></div>
+  <form id="quiz-form"></form>
+  <button id="submit-btn" style="display:none">Submit Exam</button>
+  <div id="complete-message"></div>
+</div>
+
 <script>
-  // ---------------- QUESTIONS ----------------
-  const questions = [
-    {q:"Which device operates at Layer 1 of the OSI model?", options:["Switch","Router","Hub","Firewall"], answer:"Hub"},
-    {q:"Which cable is commonly used for connecting a PC to a switch?", options:["Coaxial cable","Fiber optic cable","Straight-through Ethernet cable","Console cable"], answer:"Straight-through Ethernet cable"},
-    {q:"A broadcast domain is created by which device?", options:["Hub","Switch","Router","Repeater"], answer:"Router"},
-    // (Questions unchanged – same as your original file)
-    {q:"Which command saves configuration to NVRAM?", options:["copy running-config startup-config","write erase","reload","show run"], answer:"copy running-config startup-config"}
-  ];
+/* ================= 100 QUESTIONS ================= */
+const questions = [
+{q:"Which device operates at Layer 1 of the OSI model?",options:["Switch","Router","Hub","Firewall"],answer:"Hub"},
+{q:"Which cable is used to connect PC to switch?",options:["Coaxial","Fiber","Straight-through","Console"],answer:"Straight-through"},
+{q:"Which device creates broadcast domain?",options:["Hub","Switch","Router","Repeater"],answer:"Router"},
+{q:"Which breaks collision domain?",options:["Hub","Switch","Bridge","Both B and C"],answer:"Both B and C"},
+{q:"Which OSI layer handles routing?",options:["Layer 2","Layer 3","Layer 4","Layer 7"],answer:"Layer 3"},
+{q:"Valid private IP?",options:["12.0.0.1","192.168.1.1","172.50.1.1","8.8.8.8"],answer:"192.168.1.1"},
+{q:"MAC address size?",options:["32","48","64","128"],answer:"48"},
+{q:"ARP works at?",options:["L1","L2","L3","L4"],answer:"L2"},
+{q:"Default Class C subnet?",options:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.252"],answer:"255.255.255.0"},
+{q:"Loopback IP?",options:["0.0.0.0","127.0.0.1","255.255.255.255","224.0.0.1"],answer:"127.0.0.1"},
 
-  // ---------------- ELEMENTS ----------------
-  const instructionDiv = document.getElementById('instruction');
-  const startBtn = document.getElementById('start-btn');
-  const studentNameInput = document.getElementById('student-name');
-  const messageDiv = document.getElementById('message');
-  const quizForm = document.getElementById('quiz-form');
-  const submitBtn = document.getElementById('submit-btn');
-  const timerDiv = document.getElementById('timer');
-  const completeMsgDiv = document.getElementById('complete-message');
+{q:"Which protocol uses port 80?",options:["FTP","HTTP","SMTP","DNS"],answer:"HTTP"},
+{q:"DNS port number?",options:["21","25","53","110"],answer:"53"},
+{q:"TCP is?",options:["Connectionless","Connection oriented","Stateless","Hybrid"],answer:"Connection oriented"},
+{q:"UDP used for?",options:["File transfer","Email","Streaming","Web"],answer:"Streaming"},
+{q:"OSI layer for encryption?",options:["Session","Transport","Presentation","Network"],answer:"Presentation"},
+{q:"Which command checks connectivity?",options:["ipconfig","ping","netstat","nslookup"],answer:"ping"},
+{q:"Default VLAN?",options:["0","1","10","99"],answer:"1"},
+{q:"Trunk uses?",options:["802.1Q","802.1D","802.1X","802.1W"],answer:"802.1Q"},
+{q:"STP prevents?",options:["Routing loop","Broadcast storm","Collision","NAT"],answer:"Broadcast storm"},
+{q:"STP default priority?",options:["0","4096","32768","65535"],answer:"32768"},
 
-  // ✅ EXAM DATE & TIME UPDATED
-  const examStart = new Date("2026-01-25T11:00:00");
-  const examDuration = 3 * 60 * 60;
+{q:"RIP metric?",options:["Cost","Bandwidth","Hop count","Delay"],answer:"Hop count"},
+{q:"Max hop in RIP?",options:["10","15","16","32"],answer:"15"},
+{q:"RIP port?",options:["UDP 67","UDP 69","UDP 520","TCP 179"],answer:"UDP 520"},
+{q:"EIGRP algorithm?",options:["SPF","DUAL","Bellman-Ford","Flooding"],answer:"DUAL"},
+{q:"EIGRP AD?",options:["90","100","110","120"],answer:"90"},
+{q:"OSPF algorithm?",options:["DUAL","SPF","Distance vector","Hybrid"],answer:"SPF"},
+{q:"OSPF multicast?",options:["224.0.0.5","224.0.0.6","224.0.0.9","224.0.0.10"],answer:"224.0.0.5"},
+{q:"Static route AD?",options:["0","1","90","110"],answer:"1"},
+{q:"Command show routing table?",options:["show ip route","show run","show ip int","show protocols"],answer:"show ip route"},
 
-  let timer = examDuration;
-  let interval;
+{q:"SSH port?",options:["21","22","23","25"],answer:"22"},
+{q:"HTTPS port?",options:["80","443","21","25"],answer:"443"},
+{q:"DHCP assigns?",options:["MAC","IP","Port","DNS"],answer:"IP"},
+{q:"NAT full form?",options:["Network Address Translation","New Address Table","Node Access Type","None"],answer:"Network Address Translation"},
+{q:"PAT maps?",options:["1-1","Many-Many","Many-1","1-Many"],answer:"Many-1"},
+{q:"IPv6 broadcast?",options:["Yes","No","Limited","Anycast"],answer:"No"},
+{q:"Port security limits?",options:["IP","MAC","VLAN","Subnet"],answer:"MAC"},
+{q:"Violation shutdown mode?",options:["Protect","Restrict","Shutdown","Alert"],answer:"Shutdown"},
+{q:"VTP server role?",options:["Create VLAN","Forward only","Delete DB","Disable VLAN"],answer:"Create VLAN"},
 
-  instructionDiv.style.display = 'block';
+{q:"EtherChannel bundles?",options:["Links","Routers","VLANs","IPs"],answer:"Links"},
+{q:"LACP protocol no?",options:["01","88","89","90"],answer:"89"},
+{q:"RSTP standard?",options:["802.1D","802.1W","802.1Q","802.1X"],answer:"802.1W"},
+{q:"Cut-through latency?",options:["High","Low","Medium","None"],answer:"Low"},
+{q:"Switch works on?",options:["IP","MAC","Port","VLAN"],answer:"MAC"},
+{q:"Router works on?",options:["MAC","IP","Port","Frame"],answer:"IP"},
+{q:"Private range 172?",options:["172.0-15","172.16-31","172.32-47","172.48-63"],answer:"172.16-31"},
+{q:"Subnet /30 hosts?",options:["2","4","6","8"],answer:"2"},
+{q:"Command save config?",options:["copy run start","reload","erase","show run"],answer:"copy run start"}
+];
 
-  startBtn.addEventListener('click', () => {
-    const now = new Date();
+/* ================= LOGIC ================= */
+const instruction=document.getElementById("instruction");
+const startBtn=document.getElementById("start-btn");
+const quizForm=document.getElementById("quiz-form");
+const submitBtn=document.getElementById("submit-btn");
+const timerDiv=document.getElementById("timer");
+const messageDiv=document.getElementById("message");
+const nameInput=document.getElementById("student-name");
+const completeMsg=document.getElementById("complete-message");
 
-    if (now < examStart) {
-      alert("Exam has not started yet. Please wait until 11:00 AM on 25-Jan-2026.");
-      return;
-    }
+const examStart=new Date("2026-01-25T11:00:00");
+let timer=3*60*60,interval;
 
-    const studentName = studentNameInput.value.trim();
-    if (studentName === "") {
-      alert("Please enter your name");
-      return;
-    }
+instruction.style.display="block";
 
-    instructionDiv.style.display = 'none';
-    messageDiv.innerText = "Exam Started!";
-    quizForm.style.display = 'block';
-    submitBtn.style.display = 'inline-block';
+startBtn.onclick=()=>{
+  if(new Date()<examStart){
+    alert("Exam starts at 25-Jan-2026 11:00 AM");
+    return;
+  }
+  if(nameInput.value.trim()==""){alert("Enter name");return;}
 
-    questions.forEach((q, index) => {
-      const div = document.createElement('div');
-      div.className = 'question';
-      div.id = `q${index}`;
-      div.innerHTML =
-        `<p>${index + 1}. ${q.q}</p>` +
-        q.options.map(opt =>
-          `<label><input type="radio" name="q${index}" value="${opt}"> ${opt}</label><br>`
-        ).join('');
-      quizForm.appendChild(div);
+  instruction.style.display="none";
+  messageDiv.innerText="Exam Started";
+  quizForm.style.display="block";
+  submitBtn.style.display="block";
 
-      div.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-          const next = document.getElementById(`q${index + 1}`);
-          if (next) next.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      });
-    });
-
-    interval = setInterval(() => {
-      let h = Math.floor(timer / 3600);
-      let m = Math.floor((timer % 3600) / 60);
-      let s = timer % 60;
-
-      timerDiv.innerText =
-        `${h.toString().padStart(2,'0')}:` +
-        `${m.toString().padStart(2,'0')}:` +
-        `${s.toString().padStart(2,'0')}`;
-
-      if (timer <= 0) {
-        clearInterval(interval);
-        submitExam();
-      }
-      timer--;
-    }, 1000);
+  questions.forEach((q,i)=>{
+    let d=document.createElement("div");
+    d.className="question";
+    d.innerHTML=`<p>${i+1}. ${q.q}</p>`+
+      q.options.map(o=>`<label><input type="radio" name="q${i}" value="${o}"> ${o}</label><br>`).join("");
+    quizForm.appendChild(d);
   });
 
-  submitBtn.addEventListener('click', submitExam);
+  interval=setInterval(()=>{
+    let h=Math.floor(timer/3600),m=Math.floor(timer%3600/60),s=timer%60;
+    timerDiv.innerText=`${h}:${m}:${s}`;
+    if(timer--<=0) submitExam();
+  },1000);
+};
 
-  function submitExam() {
-    const studentName = studentNameInput.value.trim() || "Unknown";
-    let score = 0;
+submitBtn.onclick=submitExam;
 
-    questions.forEach((q, index) => {
-      const ans = document.querySelector(`input[name="q${index}"]:checked`);
-      if (ans && ans.value === q.answer) score++;
-    });
+function submitExam(){
+  let score=0;
+  questions.forEach((q,i)=>{
+    let a=document.querySelector(`input[name=q${i}]:checked`);
+    if(a && a.value===q.answer) score++;
+  });
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text("CCNA Exam Report", 10, 10);
-    doc.text(`Student: ${studentName}`, 10, 20);
-    doc.text(`Score: ${score}/${questions.length}`, 10, 30);
-    doc.save("CCNA_Exam_Report.pdf");
+  const {jsPDF}=window.jspdf;
+  let doc=new jsPDF();
+  doc.text("CCNA Exam Report",10,10);
+  doc.text("Name: "+nameInput.value,10,20);
+  doc.text("Score: "+score+"/100",10,30);
+  doc.save("CCNA_Result.pdf");
 
-    const whatsappNumber = "9353744038";
-    const waMsg = `CCNA Exam Report\nStudent: ${studentName}\nScore: ${score}/${questions.length}`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMsg)}`, "_blank");
-
-    const email = "msminfotech25@gmail.com";
-    const subject = "CCNA Exam Report";
-    const body = `Student: ${studentName}\nScore: ${score}/${questions.length}`;
-    window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
-
-    completeMsgDiv.style.display = 'block';
-    completeMsgDiv.innerText =
-      "Exam completed! For any queries contact MSM Info Tech: 9353744038 / msminfotech25@gmail.com";
-
-    clearInterval(interval);
-  }
+  completeMsg.style.display="block";
+  completeMsg.innerText="Exam Completed";
+  clearInterval(interval);
+}
 </script>
 </body>
 </html>
