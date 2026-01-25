@@ -1,177 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>CCNA 100 Marks Quiz</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body{
-      font-family:Arial,sans-serif;
-      background:linear-gradient(135deg,#1e3c72,#2a5298);
-      color:#fff;margin:0;padding:0
-    }
-    .container{
-      max-width:900px;margin:50px auto;
-      padding:30px;background:rgba(0,0,0,0.7);
-      border-radius:15px
-    }
-    h1,h2{text-align:center;color:#ffd700}
-    .instruction,#quiz-form,#complete-message{display:none}
-    .question{
-      background:rgba(255,255,255,0.1);
-      padding:15px;border-radius:10px;margin-bottom:20px
-    }
-    button{
-      padding:12px 25px;font-size:16px;
-      background:#ffd700;border:none;
-      border-radius:8px;cursor:pointer
-    }
-    #timer{text-align:center;font-size:20px;color:#ff4c4c}
-    #message{text-align:center;font-size:18px;color:#00ffff}
-  </style>
+<meta charset="UTF-8">
+<title>CCNA Online Exam</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#0f2027;
+  background:linear-gradient(to right,#2c5364,#203a43,#0f2027);
+  color:#fff;
+}
+.container{
+  width:90%;
+  margin:auto;
+  background:rgba(0,0,0,0.7);
+  padding:20px;
+  border-radius:10px;
+}
+h1,h2{text-align:center;color:#ffd700}
+.question{
+  background:rgba(255,255,255,0.1);
+  padding:15px;
+  margin:10px 0;
+  border-radius:8px;
+}
+button{
+  padding:10px 20px;
+  font-size:16px;
+  background:#ffd700;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+#timer{text-align:center;font-size:20px;color:#ff4444}
+</style>
 </head>
 
 <body>
+
 <div class="container">
-  <h1>CCNA 100 Marks Quiz</h1>
+<h1>CCNA Online Exam</h1>
+<p id="timer"></p>
 
-  <div class="instruction" id="instruction">
-    <h2>Instructions</h2>
-    <p>Total Questions: 100</p>
-    <p>Duration: 3 Hours</p>
-    <p>Each Question: 1 Mark</p>
-    <p>No Negative Mark</p>
-    <label>
-      Student Name:
-      <input type="text" id="student-name">
-    </label><br><br>
-    <button id="start-btn">Start Exam</button>
-  </div>
+<label>Student Name:
+<input type="text" id="student"></label>
+<br><br>
 
-  <div id="message">Exam will start at 25-Jan-2026 11:00 AM</div>
-  <div id="timer"></div>
-  <form id="quiz-form"></form>
-  <button id="submit-btn" style="display:none">Submit Exam</button>
-  <div id="complete-message"></div>
+<button onclick="startExam()">Start Exam</button>
+
+<form id="quiz"></form>
+
+<button onclick="submitExam()">Submit Exam</button>
+
+<h2 id="result"></h2>
 </div>
 
 <script>
-/* ================= 100 QUESTIONS ================= */
+/* ================== 100 QUESTIONS ================== */
 const questions = [
-{q:"Which device operates at Layer 1 of the OSI model?",options:["Switch","Router","Hub","Firewall"],answer:"Hub"},
-{q:"Which cable is used to connect PC to switch?",options:["Coaxial","Fiber","Straight-through","Console"],answer:"Straight-through"},
-{q:"Which device creates broadcast domain?",options:["Hub","Switch","Router","Repeater"],answer:"Router"},
-{q:"Which breaks collision domain?",options:["Hub","Switch","Bridge","Both B and C"],answer:"Both B and C"},
-{q:"Which OSI layer handles routing?",options:["Layer 2","Layer 3","Layer 4","Layer 7"],answer:"Layer 3"},
-{q:"Valid private IP?",options:["12.0.0.1","192.168.1.1","172.50.1.1","8.8.8.8"],answer:"192.168.1.1"},
-{q:"MAC address size?",options:["32","48","64","128"],answer:"48"},
-{q:"ARP works at?",options:["L1","L2","L3","L4"],answer:"L2"},
-{q:"Default Class C subnet?",options:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.252"],answer:"255.255.255.0"},
-{q:"Loopback IP?",options:["0.0.0.0","127.0.0.1","255.255.255.255","224.0.0.1"],answer:"127.0.0.1"},
+{q:"Layer 1 device?",o:["Router","Switch","Hub","Firewall"],a:"Hub"},
+{q:"OSI layers count?",o:["5","6","7","8"],a:"7"},
+{q:"Private IP?",o:["8.8.8.8","192.168.1.1","1.1.1.1","172.40.1.1"],a:"192.168.1.1"},
+{q:"MAC address size?",o:["32","48","64","128"],a:"48"},
+{q:"ARP does?",o:["MAC→IP","IP→MAC","IP→Port","Port→IP"],a:"IP→MAC"},
+{q:"Layer 3 protocol?",o:["ARP","IP","FTP","HTTP"],a:"IP"},
+{q:"Default HTTP port?",o:["21","22","80","443"],a:"80"},
+{q:"UDP used for?",o:["File transfer","Streaming","Email","FTP"],a:"Streaming"},
+{q:"Loopback IP?",o:["0.0.0.0","127.0.0.1","255.255.255.255","1.1.1.1"],a:"127.0.0.1"},
+{q:"Broadcast IP of 192.168.1.0/24?",o:["192.168.1.1","192.168.1.254","192.168.1.255","192.168.0.255"],a:"192.168.1.255"},
 
-{q:"Which protocol uses port 80?",options:["FTP","HTTP","SMTP","DNS"],answer:"HTTP"},
-{q:"DNS port number?",options:["21","25","53","110"],answer:"53"},
-{q:"TCP is?",options:["Connectionless","Connection oriented","Stateless","Hybrid"],answer:"Connection oriented"},
-{q:"UDP used for?",options:["File transfer","Email","Streaming","Web"],answer:"Streaming"},
-{q:"OSI layer for encryption?",options:["Session","Transport","Presentation","Network"],answer:"Presentation"},
-{q:"Which command checks connectivity?",options:["ipconfig","ping","netstat","nslookup"],answer:"ping"},
-{q:"Default VLAN?",options:["0","1","10","99"],answer:"1"},
-{q:"Trunk uses?",options:["802.1Q","802.1D","802.1X","802.1W"],answer:"802.1Q"},
-{q:"STP prevents?",options:["Routing loop","Broadcast storm","Collision","NAT"],answer:"Broadcast storm"},
-{q:"STP default priority?",options:["0","4096","32768","65535"],answer:"32768"},
+{q:"Subnet mask /26?",o:["255.255.255.0","255.255.255.128","255.255.255.192","255.255.255.224"],a:"255.255.255.192"},
+{q:"WAN link subnet?",o:["/24","/27","/30","/16"],a:"/30"},
+{q:"Layer 2 device?",o:["Router","Switch","Firewall","Server"],a:"Switch"},
+{q:"Collision domain broken by?",o:["Hub","Switch","Repeater","Cable"],a:"Switch"},
+{q:"Broadcast domain broken by?",o:["Hub","Switch","Router","Bridge"],a:"Router"},
+{q:"Class C default mask?",o:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.252"],a:"255.255.255.0"},
+{q:"Which is NOT private?",o:["10.0.0.1","172.20.1.1","192.168.1.1","172.50.1.1"],a:"172.50.1.1"},
+{q:"DNS port?",o:["21","25","53","110"],a:"53"},
+{q:"TCP type?",o:["Connectionless","Connection-oriented","Broadcast","Multicast"],a:"Connection-oriented"},
+{q:"FTP port?",o:["21","22","23","25"],a:"21"},
 
-{q:"RIP metric?",options:["Cost","Bandwidth","Hop count","Delay"],answer:"Hop count"},
-{q:"Max hop in RIP?",options:["10","15","16","32"],answer:"15"},
-{q:"RIP port?",options:["UDP 67","UDP 69","UDP 520","TCP 179"],answer:"UDP 520"},
-{q:"EIGRP algorithm?",options:["SPF","DUAL","Bellman-Ford","Flooding"],answer:"DUAL"},
-{q:"EIGRP AD?",options:["90","100","110","120"],answer:"90"},
-{q:"OSPF algorithm?",options:["DUAL","SPF","Distance vector","Hybrid"],answer:"SPF"},
-{q:"OSPF multicast?",options:["224.0.0.5","224.0.0.6","224.0.0.9","224.0.0.10"],answer:"224.0.0.5"},
-{q:"Static route AD?",options:["0","1","90","110"],answer:"1"},
-{q:"Command show routing table?",options:["show ip route","show run","show ip int","show protocols"],answer:"show ip route"},
+{q:"HTTPS port?",o:["80","110","443","8080"],a:"443"},
+{q:"SMTP port?",o:["25","53","80","443"],a:"25"},
+{q:"Which is multicast?",o:["192.168.1.1","224.0.0.1","127.0.0.1","255.255.255.255"],a:"224.0.0.1"},
+{q:"IPv4 bits?",o:["16","32","64","128"],a:"32"},
+{q:"IPv6 bits?",o:["64","96","128","256"],a:"128"},
+{q:"Ping uses?",o:["TCP","UDP","ICMP","ARP"],a:"ICMP"},
+{q:"Tracert shows?",o:["Speed","Route","MAC","Port"],a:"Route"},
+{q:"Which is LAN?",o:["MAN","WAN","PAN","Ethernet"],a:"Ethernet"},
+{q:"Which is NOT topology?",o:["Star","Bus","Mesh","Protocol"],a:"Protocol"},
+{q:"Ring topology issue?",o:["High cost","Single point failure","Slow","Secure"],a:"Single point failure"},
 
-{q:"SSH port?",options:["21","22","23","25"],answer:"22"},
-{q:"HTTPS port?",options:["80","443","21","25"],answer:"443"},
-{q:"DHCP assigns?",options:["MAC","IP","Port","DNS"],answer:"IP"},
-{q:"NAT full form?",options:["Network Address Translation","New Address Table","Node Access Type","None"],answer:"Network Address Translation"},
-{q:"PAT maps?",options:["1-1","Many-Many","Many-1","1-Many"],answer:"Many-1"},
-{q:"IPv6 broadcast?",options:["Yes","No","Limited","Anycast"],answer:"No"},
-{q:"Port security limits?",options:["IP","MAC","VLAN","Subnet"],answer:"MAC"},
-{q:"Violation shutdown mode?",options:["Protect","Restrict","Shutdown","Alert"],answer:"Shutdown"},
-{q:"VTP server role?",options:["Create VLAN","Forward only","Delete DB","Disable VLAN"],answer:"Create VLAN"},
+{q:"Mesh advantage?",o:["Low cost","High redundancy","Simple","Slow"],a:"High redundancy"},
+{q:"Switch works using?",o:["IP","MAC","Port","VLAN"],a:"MAC"},
+{q:"Router uses?",o:["MAC","IP","Port","VLAN"],a:"IP"},
+{q:"Which stores MAC table?",o:["Router","Switch","Hub","Firewall"],a:"Switch"},
+{q:"Hub works in?",o:["Half duplex","Full duplex","Both","None"],a:"Half duplex"},
+{q:"Switch default?",o:["Half","Full","Auto","None"],a:"Full"},
+{q:"CSMA/CD used in?",o:["Hub","Switch","Router","Fiber"],a:"Hub"},
+{q:"NAT expands?",o:["IP","MAC","Port","VLAN"],a:"IP"},
+{q:"PAT uses?",o:["IP only","MAC","IP+Port","DNS"],a:"IP+Port"},
+{q:"DHCP provides?",o:["IP","MAC","Gateway","All"],a:"All"},
 
-{q:"EtherChannel bundles?",options:["Links","Routers","VLANs","IPs"],answer:"Links"},
-{q:"LACP protocol no?",options:["01","88","89","90"],answer:"89"},
-{q:"RSTP standard?",options:["802.1D","802.1W","802.1Q","802.1X"],answer:"802.1W"},
-{q:"Cut-through latency?",options:["High","Low","Medium","None"],answer:"Low"},
-{q:"Switch works on?",options:["IP","MAC","Port","VLAN"],answer:"MAC"},
-{q:"Router works on?",options:["MAC","IP","Port","Frame"],answer:"IP"},
-{q:"Private range 172?",options:["172.0-15","172.16-31","172.32-47","172.48-63"],answer:"172.16-31"},
-{q:"Subnet /30 hosts?",options:["2","4","6","8"],answer:"2"},
-{q:"Command save config?",options:["copy run start","reload","erase","show run"],answer:"copy run start"}
+{q:"APIPA range?",o:["10.x.x.x","172.x.x.x","192.168.x.x","169.254.x.x"],a:"169.254.x.x"},
+{q:"Gateway purpose?",o:["Local routing","Inter-network","DNS","MAC"],a:"Inter-network"},
+{q:"Which cable longest?",o:["Cat5","Cat6","Coax","Fiber"],a:"Fiber"},
+{q:"Straight cable used for?",o:["PC-PC","PC-Switch","Switch-Switch","Router-Router"],a:"PC-Switch"},
+{q:"Cross cable?",o:["PC-Switch","PC-PC","PC-Router","Console"],a:"PC-PC"},
+{q:"Console cable used for?",o:["Data","Internet","Config","Routing"],a:"Config"},
+{q:"OSI layer encryption?",o:["Session","Transport","Presentation","Application"],a:"Presentation"},
+{q:"End-to-end delivery?",o:["Layer 2","Layer 3","Layer 4","Layer 5"],a:"Layer 4"},
+{q:"HTTP is?",o:["Stateless","Stateful","Secure","Encrypted"],a:"Stateless"},
+
+{q:"Firewall works at?",o:["L1","L2","L3","L3 & L4"],a:"L3 & L4"},
+{q:"IDS means?",o:["Intrusion Detection System","Internet Data System","Internal Detection","None"],a:"Intrusion Detection System"},
+{q:"VPN provides?",o:["Speed","Security","Broadcast","MAC"],a:"Security"},
+{q:"SSL used in?",o:["FTP","HTTP","HTTPS","SMTP"],a:"HTTPS"},
+{q:"Default VLAN?",o:["0","1","10","100"],a:"1"},
+{q:"VLAN reduces?",o:["Collision","Broadcast","Speed","Security"],a:"Broadcast"},
+{q:"STP prevents?",o:["Broadcast","Loop","Collision","Delay"],a:"Loop"},
+{q:"Switch loop causes?",o:["Storm","Slow","Crash","Hang"],a:"Storm"},
+{q:"MAC address is?",o:["Logical","Physical","Virtual","Dynamic"],a:"Physical"},
+{q:"IP address is?",o:["Physical","Logical","Virtual","MAC"],a:"Logical"}
 ];
 
-/* ================= LOGIC ================= */
-const instruction=document.getElementById("instruction");
-const startBtn=document.getElementById("start-btn");
-const quizForm=document.getElementById("quiz-form");
-const submitBtn=document.getElementById("submit-btn");
-const timerDiv=document.getElementById("timer");
-const messageDiv=document.getElementById("message");
-const nameInput=document.getElementById("student-name");
-const completeMsg=document.getElementById("complete-message");
+/* ================== EXAM LOGIC ================== */
+let time = 3*60*60;
+let interval;
 
-const examStart=new Date("2026-01-25T11:00:00");
-let timer=3*60*60,interval;
-
-instruction.style.display="block";
-
-startBtn.onclick=()=>{
-  if(new Date()<examStart){
-    alert("Exam starts at 25-Jan-2026 11:00 AM");
+function startExam(){
+  if(document.getElementById("student").value==""){
+    alert("Enter Student Name");
     return;
   }
-  if(nameInput.value.trim()==""){alert("Enter name");return;}
-
-  instruction.style.display="none";
-  messageDiv.innerText="Exam Started";
-  quizForm.style.display="block";
-  submitBtn.style.display="block";
-
+  const quiz=document.getElementById("quiz");
+  quiz.innerHTML="";
   questions.forEach((q,i)=>{
-    let d=document.createElement("div");
-    d.className="question";
-    d.innerHTML=`<p>${i+1}. ${q.q}</p>`+
-      q.options.map(o=>`<label><input type="radio" name="q${i}" value="${o}"> ${o}</label><br>`).join("");
-    quizForm.appendChild(d);
+    quiz.innerHTML+=`
+    <div class="question">
+    <p>${i+1}. ${q.q}</p>
+    ${q.o.map(opt=>`
+      <label>
+      <input type="radio" name="q${i}" value="${opt}">
+      ${opt}
+      </label><br>`).join("")}
+    </div>`;
   });
+  interval=setInterval(timer,1000);
+}
 
-  interval=setInterval(()=>{
-    let h=Math.floor(timer/3600),m=Math.floor(timer%3600/60),s=timer%60;
-    timerDiv.innerText=`${h}:${m}:${s}`;
-    if(timer--<=0) submitExam();
-  },1000);
-};
-
-submitBtn.onclick=submitExam;
+function timer(){
+  let h=Math.floor(time/3600);
+  let m=Math.floor((time%3600)/60);
+  let s=time%60;
+  document.getElementById("timer").innerText=`Time Left: ${h}:${m}:${s}`;
+  if(time--<=0) submitExam();
+}
 
 function submitExam(){
+  clearInterval(interval);
   let score=0;
   questions.forEach((q,i)=>{
-    let a=document.querySelector(`input[name=q${i}]:checked`);
-    if(a && a.value===q.answer) score++;
+    let ans=document.querySelector(`input[name=q${i}]:checked`);
+    if(ans && ans.value===q.a) score++;
   });
-
-  const {jsPDF}=window.jspdf;
-  let doc=new jsPDF();
-  doc.text("CCNA Exam Report",10,10);
-  doc.text("Name: "+nameInput.value,10,20);
-  doc.text("Score: "+score+"/100",10,30);
-  doc.save("CCNA_Result.pdf");
-
-  completeMsg.style.display="block";
-  completeMsg.innerText="Exam Completed";
-  clearInterval(interval);
+  document.getElementById("result").innerText=
+  `Score: ${score}/100`;
 }
 </script>
+
 </body>
 </html>
